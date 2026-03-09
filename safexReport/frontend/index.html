@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SafeX Guard – Send Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              lavender: "#DDD6FE",
+              skysoft: "#A4C9FF",
+              periwinkle: "#7797FF",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+
+  <body class="bg-slate-50 min-h-screen flex items-center justify-center">
+    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-xl p-6 border">
+      <h1 class="text-2xl font-semibold mb-1">SafeX Guard – Report Abuse</h1>
+      <p class="text-sm text-gray-500 mb-6">
+        Sends report directly to <b>sreeyashana4@gmail.com</b>
+      </p>
+
+      <form id="reportForm" class="space-y-4">
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm font-semibold">Case ID</label>
+            <input
+              id="case_id"
+              value="SX-CASE-0001"
+              class="w-full mt-1 px-3 py-2 border rounded-lg"
+            />
+          </div>
+
+          <div>
+            <label class="text-sm font-semibold">Username</label>
+            <input
+              id="username"
+              value="@toxic_handle"
+              class="w-full mt-1 px-3 py-2 border rounded-lg"
+            />
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm font-semibold">Tweet ID</label>
+            <input
+              id="tweet_id"
+              value="2234567812"
+              class="w-full mt-1 px-3 py-2 border rounded-lg"
+            />
+          </div>
+
+          <div>
+            <label class="text-sm font-semibold">Risk</label>
+            <select id="risk" class="w-full mt-1 px-3 py-2 border rounded-lg">
+              <option>Low</option>
+              <option>Medium</option>
+              <option selected>High</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm font-semibold">Confidence (0–1)</label>
+            <input
+              id="confidence"
+              type="number"
+              step="0.01"
+              value="0.88"
+              class="w-full mt-1 px-3 py-2 border rounded-lg"
+            />
+          </div>
+
+          <div class="text-sm text-gray-600 flex items-end">
+            Backend:
+            <span class="ml-2 font-semibold">http://127.0.0.1:8000</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-sm font-semibold">Tweet Text</label>
+          <textarea
+            id="tweet_text"
+            rows="4"
+            class="w-full mt-1 px-3 py-2 border rounded-lg"
+          >
+Stop being stupid. You're a loser.
+        </textarea
+          >
+        </div>
+
+        <div class="flex items-center gap-4 pt-2">
+          <button
+            type="submit"
+            class="px-6 py-2 rounded-xl text-white font-semibold"
+            style="background: linear-gradient(135deg, #7797ff, #a4c9ff)"
+          >
+            Send Report Email
+          </button>
+
+          <span id="msg" class="text-sm"></span>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      const API = "http://127.0.0.1:8000/send-report";
+
+      document
+        .getElementById("reportForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const msg = document.getElementById("msg");
+          msg.textContent = "Sending...";
+          msg.className = "text-sm text-gray-600";
+
+          const payload = {
+            case_id: document.getElementById("case_id").value.trim(),
+            username: document.getElementById("username").value.trim(),
+            tweet_id: document.getElementById("tweet_id").value.trim(),
+            tweet_text: document.getElementById("tweet_text").value.trim(),
+            confidence: Number(document.getElementById("confidence").value),
+            risk: document.getElementById("risk").value,
+          };
+
+          try {
+            const res = await fetch(API, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.detail || "Failed");
+
+            msg.textContent = "✅ Email sent successfully!";
+            msg.className = "text-sm text-green-600 font-semibold";
+          } catch (err) {
+            msg.textContent = "❌ " + err.message;
+            msg.className = "text-sm text-red-600 font-semibold";
+          }
+        });
+    </script>
+  </body>
+</html>

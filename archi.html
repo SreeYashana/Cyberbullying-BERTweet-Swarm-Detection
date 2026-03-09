@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SafeX Guard – System Architecture</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              lavender: "#DDD6FE",
+              skysoft: "#A4C9FF",
+              periwinkle: "#7797FF",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+
+  <body class="bg-slate-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white border-b shadow-sm">
+      <div class="max-w-7xl mx-auto px-6 py-4 flex items-center gap-4">
+        <div
+          class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold"
+          style="background: linear-gradient(135deg, #ddd6fe, #a4c9ff, #7797ff)"
+        >
+          SX
+        </div>
+        <div>
+          <h1 class="text-lg font-semibold">SafeX Guard</h1>
+          <p class="text-sm text-gray-500">
+            Cyberbullying Detection – Architecture
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="max-w-7xl mx-auto px-6 py-8">
+      <div class="bg-white rounded-2xl shadow-lg p-6 border">
+        <h2 class="text-xl font-semibold mb-2">System Architecture</h2>
+        <p class="text-sm text-gray-600 mb-6">
+          Offline training and online inference pipeline for cyberbullying
+          detection on X (Twitter)
+        </p>
+
+        <!-- SVG Container -->
+        <div class="w-full overflow-auto border rounded-xl bg-gray-50 p-4">
+          <img
+            src="Frame 2svg.svg"
+            alt="SafeX Guard Architecture Diagram"
+            class="w-full h-auto mx-auto"
+          />
+        </div>
+
+        <!-- Footer note -->
+        <p class="text-xs text-gray-500 mt-4">
+          Note: Reporting to cybercrime and X security is demonstrated as a
+          simulation for academic purposes.
+        </p>
+      </div>
+    </main>
+  </body>
+</html>

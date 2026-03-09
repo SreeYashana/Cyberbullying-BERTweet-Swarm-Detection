@@ -1,0 +1,292 @@
+{
+  "generated_at": "2026-02-02T00:39:54.706036",
+  "mode": "global_search_recent_tweets + model_filter",
+  "query": "\"fuck\" OR \"shit\" OR \"asshole\" OR \"idiot\" OR \"stupid\" OR \"ugly\" OR \"loser\" OR \"shut up\" OR \"go die\" -is:retweet lang:en",
+  "max_results_per_page": 10,
+  "tweets_collected": 10,
+  "bad_tweets_kept": 10,
+  "max_bad_profiles": 10,
+  "max_bad_tweets": 10,
+  "accounts": [
+    {
+      "author_id": "99822746",
+      "username": "Rayzasoulja",
+      "name": "Tommy Vercetti",
+      "verified": false,
+      "followers": 1740,
+      "bad_tweets": [
+        {
+          "tweet_id": "2018122111605465198",
+          "text": "RT @hustlanani: If I like your story on your birthday that mean happy birthday, shit i'm tired",
+          "created_at": "2026-02-02 00:39:40+00:00",
+          "metrics": {
+            "retweet_count": 5723,
+            "reply_count": 0,
+            "like_count": 0,
+            "quote_count": 0,
+            "bookmark_count": 0,
+            "impression_count": 0
+          },
+          "model": {
+            "label": null,
+            "confidence": 0.9828,
+            "flagged": true,
+            "reasons": []
+          }
+        }
+      ]
+    },
+    {
+      "author_id": "1882420909257981953",
+      "username": "RyukosShower",
+      "name": "Ryuko Matoi ♨️𝕿𝖍𝖊 𝕳𝖔𝖗𝖓𝖞 𝕵𝖆𝖎𝖑♨️",
+      "verified": false,
+      "followers": 24793,
+      "bad_tweets": [
+        {
+          "tweet_id": "2018122111441674721",
+          "text": "RT @YoRha_Slut: This AI bitch needs a creampie🍦\n\nFuck virtual girlfriends and see uncensored pictures. They will suck your dick online.\n\n⬇️…",
+          "created_at": "2026-02-02 00:39:40+00:00",
+          "metrics": {
+            "retweet_count": 17,
+            "reply_count": 0,
+            "like_count": 0,
+            "quote_count": 0,
+            "bookmark_count": 0,
+            "impression_count": 0
+          },
+          "model": {
+            "label": null,
+            "confidence": 0.997,
+            "flagged": true,
+            "reasons": []
+          }
+        }
+      ]
+    },
+    {
+      "author_id": "1833375238182072320",
+      "username": "maddyxo2005",
+      "name": "maddy",
+      "verified": false,
+      "followers": 79,
+      "bad_tweets": [
+        {
+          "tweet_id": "2018122111311913019",
+          "text": "RT @emkenobi: You’re making merch profiting off of the rape and torture of children. Don’t act like you give a shit you basement dwelling f…",
+          "created_at": "2026-02-02 00:39:40+00:00",
+          "metrics": {
+            "retweet_count": 1360,
+            "reply_count": 0,
+            "like_count": 0,
+            "quote_count": 0,
+            "bookmark_count": 0,
+            "impression_count": 0
+          },
+          "model": {
+            "label": null,
+            "confidence": 0.9884,
+            "flagged": true,
+            "reasons": []
+          }
+        }
+      ]
+    },
+    {
+      "author_id": "1235018232442081280",
+      "username": "ChrisRColunga",
+      "name": "Christian",
+      "verified": false,
+      "followers": 251,
+      "bad_tweets": [
+        {
+          "tweet_id": "2018122111307407748",
+          "text": "RT @BradleyMartyn: We should bring back public executions for specific crimes. \n\nAll these weird ass child predators shouldn’t be given mer…",
+          "created_at": "2026-02-02 00:39:40+00:00",
+          "metrics": {
+            "retweet_count": 860,
+            "reply_count": 0,
+            "like_count": 0,
+            "quote_count": 0,
+            "bookmark_count": 0,
+            "impression_count": 0
+          },
+          "model": {
+            "label": null,
+            "confidence": 0.9914,
+            "flagged": true,
+            "reasons": []
+          }
+        }
+      ]
+    },
+    {
+      "author_id": "837810712504225792",
+      "username": "authorityhop",
+      "name": "Authority",
+      "verified": false,
+      "followers": 427,
+      "bad_tweets": [
+        {
+          "tweet_id": "2018122111152529644",
+          "text": "Look at this idiot; He keeps saying he Prefers to be called African; nobody cares; for some odd reasons he feels he can call himself what he wants; but the rest of us can't - He's just an idiot that wanted to make sure we knew it - for future reference\n\nhttps://t.co/THIfw2wNjt",
+          "created_at": "2026-02-02 00:39:40+00:00",
+          "metrics": {
+            "retweet_count": 0,
+            "reply_count": 0,
+            "like_count": 0,
+            "quote_count": 0,
+            "bookmark_count": 0,
+            "impression_count": 0
+          },
+          "model": {
+            "label": null,
+            "confidence": 0.8998,
+            "flagged": true,
+            "reasons": []
+          }
+        }
+      ]
+    },
+    {
+      "author_id": "1316263414122057728",
+      "username": "ngarasalim",
+      "name": "Asadola Ngara",
+      "verified": false,
+      "followers": 241,
+      "bad_tweets": [
+        {
+          "tweet_id": "2018122111055790447",
+          "text": "RT @sneako: Alex Jones is either CIA or just a fucking idiot https://t.co/TbgpaiE5zD",
+          "created_at": "2026-02-02 00:39:40+00:00",
+          "metrics": {
+            "retweet_count": 154,
+            "reply_count": 0,
+            "like_count": 0,
+            "quote_count": 0,
+            "bookmark_count": 0,
+            "impression_count": 0
+          },
+          "model": {
+            "label": null,
+            "confidence": 0.9953,
+            "flagged": true,
+            "reasons": []
+          }
+        }
+      ]
+    },
+    {
+      "author_id": "780773253375627264",
+      "username": "TheCleoPanda",
+      "name": "Cleo Panda BDAY FEB 12TH ♒🎂",
+      "verified": false,
+      "followers": 144898,
+      "bad_tweets": [
+        {
+          "tweet_id": "2018122110854668780",
+          "text": "Too afraid to fight. Too afraid to be yourself. \nStay a victim, you’ve earned it loser 🏆",
+          "created_at": "2026-02-02 00:39:40+00:00",
+          "metrics": {
+            "retweet_count": 0,
+            "reply_count": 0,
+            "like_count": 0,
+            "quote_count": 0,
+            "bookmark_count": 0,
+            "impression_count": 1
+          },
+          "model": {
+            "label": null,
+            "confidence": 0.975,
+            "flagged": true,
+            "reasons": []
+          }
+        }
+      ]
+    },
+    {
+      "author_id": "493585282",
+      "username": "alyssac312",
+      "name": "Alyssa🌻",
+      "verified": false,
+      "followers": 198,
+      "bad_tweets": [
+        {
+          "tweet_id": "2018122110552440840",
+          "text": "RT @fuckrozanov: everyone thinking ilya is having a hot girl summer fucking his way across russia probably but actually he’s at his man’s c…",
+          "created_at": "2026-02-02 00:39:40+00:00",
+          "metrics": {
+            "retweet_count": 473,
+            "reply_count": 0,
+            "like_count": 0,
+            "quote_count": 0,
+            "bookmark_count": 0,
+            "impression_count": 0
+          },
+          "model": {
+            "label": null,
+            "confidence": 0.9641,
+            "flagged": true,
+            "reasons": []
+          }
+        }
+      ]
+    },
+    {
+      "author_id": "1959993853181829120",
+      "username": "provantage8",
+      "name": "provantageaz2",
+      "verified": false,
+      "followers": 13,
+      "bad_tweets": [
+        {
+          "tweet_id": "2018122110435278852",
+          "text": "@candle84640 @davidicke Shut the fuck up you ignorant fool.",
+          "created_at": "2026-02-02 00:39:40+00:00",
+          "metrics": {
+            "retweet_count": 0,
+            "reply_count": 0,
+            "like_count": 0,
+            "quote_count": 0,
+            "bookmark_count": 0,
+            "impression_count": 1
+          },
+          "model": {
+            "label": null,
+            "confidence": 0.9942,
+            "flagged": true,
+            "reasons": []
+          }
+        }
+      ]
+    },
+    {
+      "author_id": "1475079690679296002",
+      "username": "GhostViiii82",
+      "name": "ghost82",
+      "verified": false,
+      "followers": 944,
+      "bad_tweets": [
+        {
+          "tweet_id": "2018122110418456953",
+          "text": "@GonzoEvan @JEDOUGH36 @DevaReply @KhurafatiAarohi @grok That’s just what they do if they don’t have diarrhea that day. It’s a celebratory thing for being able shit normal.",
+          "created_at": "2026-02-02 00:39:40+00:00",
+          "metrics": {
+            "retweet_count": 0,
+            "reply_count": 0,
+            "like_count": 0,
+            "quote_count": 0,
+            "bookmark_count": 0,
+            "impression_count": 0
+          },
+          "model": {
+            "label": null,
+            "confidence": 0.9855,
+            "flagged": true,
+            "reasons": []
+          }
+        }
+      ]
+    }
+  ]
+}

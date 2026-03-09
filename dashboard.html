@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SafeX Guard - Dashboard</title>
+
+    <!-- Tailwind CDN (prototype) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+      .shadow-soft {
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      }
+    </style>
+  </head>
+
+  <body class="bg-slate-50 text-slate-900">
+    <div class="max-w-7xl mx-auto p-6">
+      <!-- Header -->
+      <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-white"
+            style="background: linear-gradient(135deg, #7797ff, #a4c9ff)"
+          >
+            SX
+          </div>
+          <div>
+            <div class="text-xl font-semibold">SafeX Guard</div>
+            <div class="text-sm text-slate-500">
+              Cyberbullying Detection Dashboard
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <span
+            class="text-xs px-3 py-1 rounded-full bg-slate-200 text-slate-700"
+            id="modelStatus"
+            >Backend: Checking...</span
+          >
+          <button
+            class="px-4 py-2 rounded-xl text-sm font-semibold text-white shadow-soft"
+            style="background: linear-gradient(135deg, #7797ff, #a4c9ff)"
+            onclick="location.href = 'index.html'"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
+        <div
+          class="bg-white rounded-2xl border border-slate-200 shadow-soft p-5"
+        >
+          <div class="text-sm text-slate-500">Tweets Scanned</div>
+          <div class="text-3xl font-semibold mt-2" id="statScanned">0</div>
+        </div>
+        <div
+          class="bg-white rounded-2xl border border-slate-200 shadow-soft p-5"
+        >
+          <div class="text-sm text-slate-500">Abusive Tweets</div>
+          <div
+            class="text-3xl font-semibold mt-2 text-red-500"
+            id="statAbusive"
+          >
+            0
+          </div>
+        </div>
+        <div
+          class="bg-white rounded-2xl border border-slate-200 shadow-soft p-5"
+        >
+          <div class="text-sm text-slate-500">Non-Abusive</div>
+          <div
+            class="text-3xl font-semibold mt-2 text-green-600"
+            id="statClean"
+          >
+            0
+          </div>
+        </div>
+        <div
+          class="bg-white rounded-2xl border border-slate-200 shadow-soft p-5"
+        >
+          <div class="text-sm text-slate-500">Avg Confidence</div>
+          <div class="text-3xl font-semibold mt-2" id="statAvgConf">0.00</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="border-b border-slate-200 mb-6">
+        <button
+          class="px-4 py-3 text-blue-600 border-b-2 border-blue-600 font-semibold"
+        >
+          Live Scanner
+        </button>
+        <button class="px-4 py-3 text-slate-500">Manual Check</button>
+        <button class="px-4 py-3 text-slate-500">Analytics</button>
+        <button class="px-4 py-3 text-slate-500">Account Analyzer</button>
+      </div>
+
+      <!-- LIVE SCAN PANEL -->
+      <div id="tab-live" class="tab-panel mt-6">
+        <div
+          class="bg-white rounded-2xl border border-slate-200 shadow-soft p-6"
+        >
+          <div class="flex flex-wrap gap-4 items-center justify-between">
+            <div class="flex flex-wrap gap-3">
+              <input
+                id="liveKeyword"
+                type="text"
+                placeholder="Keyword (optional)"
+                class="px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              />
+              <select
+                id="liveCount"
+                class="px-4 py-2 rounded-xl border border-slate-200"
+              >
+                <option value="10" selected>10 Tweets</option>
+                <option value="20">20 Tweets</option>
+                <option value="50">50 Tweets</option>
+              </select>
+            </div>
+
+            <div class="flex gap-3">
+              <button
+                id="btnStart"
+                class="px-4 py-2 rounded-xl text-sm font-semibold text-white shadow-soft"
+                style="background: linear-gradient(135deg, #7797ff, #a4c9ff)"
+              >
+                Start Scan
+              </button>
+              <button
+                id="btnExport"
+                class="px-4 py-2 rounded-xl border border-slate-200 text-sm font-semibold hover:bg-slate-50"
+              >
+                Export CSV
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-4 text-xs text-slate-500" id="liveHint"></div>
+
+          <div class="mt-6 overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="text-left text-slate-500 border-b">
+                  <th class="pb-3">Tweet</th>
+                  <th class="pb-3">Prediction</th>
+                  <th class="pb-3">Confidence</th>
+                  <th class="pb-3">Action</th>
+                </tr>
+              </thead>
+              <tbody id="liveTbody" class="divide-y">
+                <tr>
+                  <td colspan="4" class="py-6 text-slate-500">
+                    Click <b>Start Scan</b> to fetch tweets.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Debug box -->
+          <details class="mt-5">
+            <summary
+              class="cursor-pointer text-sm font-semibold text-slate-700"
+            >
+              Debug (show last raw response)
+            </summary>
+            <pre
+              id="debugBox"
+              class="mt-3 p-4 rounded-xl bg-slate-900 text-slate-100 text-xs overflow-auto"
+            ></pre>
+          </details>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ===========================
+      // CONFIG
+      // ===========================
+      const API_BASE = "http://127.0.0.1:8000";
+      const HEALTH_URL = `${API_BASE}/health`;
+      const LIVE_SCAN_URL = `${API_BASE}/live-scan`;
+
+      let lastScanRows = [];
+      let activeScanId = 0; // ✅ prevents old responses overriding new ones
+
+      function escapeHtml(str) {
+        return String(str || "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function normalizeFlag(flagged) {
+        return (
+          flagged === true ||
+          flagged === "true" ||
+          flagged === 1 ||
+          flagged === "1"
+        );
+      }
+
+      function toFixed2(x) {
+        const n = Number(x);
+        return Number.isFinite(n) ? n.toFixed(2) : "0.00";
+      }
+
+      function renderRows(rows) {
+        const tbody = document.getElementById("liveTbody");
+        tbody.innerHTML = "";
+
+        if (!rows || rows.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-slate-500">No results</td></tr>`;
+          return;
+        }
+
+        for (const row of rows) {
+          const tweet = escapeHtml(row.tweet_text);
+          const username = escapeHtml(row.username || "unknown");
+          const tweetId = escapeHtml(row.tweet_id || "");
+          const confTxt = toFixed2(row.confidence || 0);
+          const isFlagged = normalizeFlag(row.flagged);
+
+          const badge = isFlagged
+            ? `<span class="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">Cyberbullying</span>`
+            : `<span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">Not Cyberbullying</span>`;
+
+          const reportBtn = isFlagged
+            ? `<button class="px-3 py-1.5 rounded-lg text-xs font-semibold text-white"
+              style="background: linear-gradient(135deg, #ff6b6b, #ffa8a8)"
+              onclick="openReportPage('${encodeURIComponent(row.case_id || "")}','${encodeURIComponent(tweetId)}','${encodeURIComponent(username)}','${encodeURIComponent(row.tweet_text)}','${encodeURIComponent(row.confidence)}')">
+              Report
+           </button>`
+            : `<span class="text-xs text-slate-400">—</span>`;
+
+          tbody.insertAdjacentHTML(
+            "beforeend",
+            `
+        <tr class="align-top">
+          <td class="py-4 pr-4">
+            <div class="text-slate-900">${tweet}</div>
+            <div class="text-xs text-slate-400 mt-1">@${username} • ${tweetId}</div>
+          </td>
+          <td class="py-4 pr-4">${badge}</td>
+          <td class="py-4 pr-4">${confTxt}</td>
+          <td class="py-4">${reportBtn}</td>
+        </tr>
+        `,
+          );
+        }
+      }
+
+      function updateStats(rows) {
+        const scanned = rows.length;
+        const abusive = rows.filter((r) => normalizeFlag(r.flagged)).length;
+        const clean = scanned - abusive;
+        const avgConf =
+          scanned === 0
+            ? 0
+            : rows.reduce((s, r) => s + Number(r.confidence || 0), 0) / scanned;
+
+        document.getElementById("statScanned").textContent = scanned;
+        document.getElementById("statAbusive").textContent = abusive;
+        document.getElementById("statClean").textContent = clean;
+        document.getElementById("statAvgConf").textContent = avgConf.toFixed(2);
+      }
+
+      function resetUIForNewScan() {
+        // ✅ Clear old results immediately
+        lastScanRows = [];
+        renderRows([]);
+        updateStats([]);
+        document.getElementById("liveHint").textContent =
+          "Starting new scan...";
+      }
+
+      async function startLiveScan() {
+        const btn = document.getElementById("btnStart");
+        const hint = document.getElementById("liveHint");
+
+        const keyword = document.getElementById("liveKeyword").value.trim();
+        const count = parseInt(document.getElementById("liveCount").value, 10);
+
+        // ✅ new scan request id
+        const scanId = ++activeScanId;
+
+        resetUIForNewScan();
+
+        btn.disabled = true;
+        btn.textContent = "Scanning...";
+        hint.textContent = "Calling backend /live-scan ...";
+
+        try {
+          const resp = await fetch(LIVE_SCAN_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ keyword, count }),
+          });
+
+          const rawText = await resp.text(); // read once
+          if (!resp.ok) {
+            throw new Error(`Backend error ${resp.status}: ${rawText}`);
+          }
+
+          // ✅ If another scan started after this one, ignore this result
+          if (scanId !== activeScanId) return;
+
+          const data = JSON.parse(rawText);
+          const rows = Array.isArray(data)
+            ? data
+            : data.rows || data.results || [];
+
+          const mapped = rows.map((r) => {
+            const isFlagged = normalizeFlag(r.flagged);
+            return {
+              tweet_id: r.tweet_id || "",
+              username: r.username || "unknown",
+              tweet_text: r.tweet_text || "",
+              confidence: Number(r.confidence || 0),
+              flagged: isFlagged,
+              prediction:
+                r.prediction ||
+                (isFlagged ? "Cyberbullying" : "Not Cyberbullying"),
+              case_id: r.case_id || "", // optional
+            };
+          });
+
+          lastScanRows = mapped;
+
+          renderRows(mapped);
+          updateStats(mapped);
+
+          hint.textContent = `Scan completed ✅ (${mapped.length} tweets)`;
+        } catch (err) {
+          console.error(err);
+
+          // ✅ still only show error if this is the latest scan
+          if (scanId !== activeScanId) return;
+
+          document.getElementById("liveTbody").innerHTML =
+            `<tr><td colspan="4" class="py-6 text-red-500 font-semibold">Failed to fetch. Open Console (F12) to see error.</td></tr>`;
+
+          hint.textContent = String(err.message || err);
+        } finally {
+          // ✅ only re-enable if this is latest scan
+          if (scanId === activeScanId) {
+            btn.disabled = false;
+            btn.textContent = "Start Scan";
+          }
+        }
+      }
+
+      // ✅ attach
+      document
+        .getElementById("btnStart")
+        .addEventListener("click", startLiveScan);
+
+      // ✅ optional: open report page with prefilled query params
+      function openReportPage(
+        caseId,
+        tweetId,
+        username,
+        tweetText,
+        confidence,
+      ) {
+        const url =
+          `report.html?case_id=${caseId || ""}` +
+          `&tweet_id=${tweetId}` +
+          `&username=${username}` +
+          `&tweet_text=${tweetText}` +
+          `&confidence=${confidence}`;
+
+        window.location.href = url;
+      }
+    </script>
+  </body>
+</html>

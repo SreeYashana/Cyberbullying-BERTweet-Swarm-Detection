@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SafeX Guard — Report Case</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="bg-slate-50 text-slate-900">
+    <div class="min-h-screen flex items-center justify-center p-6">
+      <div
+        class="w-full max-w-4xl bg-white rounded-2xl border border-slate-200 shadow-xl p-8"
+      >
+        <div class="flex items-center justify-between gap-4 mb-6">
+          <div>
+            <h1 class="text-2xl font-bold">Submit Cyberbullying Report</h1>
+            <p class="text-sm text-slate-500">
+              Report API:
+              <span class="font-mono">http://127.0.0.1:8001/send-report</span>
+            </p>
+          </div>
+
+          <div class="flex gap-2">
+            <button
+              id="btnTest"
+              class="px-4 py-2 rounded-xl border border-slate-200 text-sm font-semibold hover:bg-slate-50"
+            >
+              Test Connection
+            </button>
+
+            <button
+              class="px-4 py-2 rounded-xl border border-slate-200 text-sm font-semibold hover:bg-slate-50"
+              onclick="location.href = 'dashboard.html'"
+            >
+              ← Back
+            </button>
+          </div>
+        </div>
+
+        <form id="reportForm" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <label class="text-sm font-semibold text-slate-700">Case ID</label>
+            <input
+              id="case_id"
+              class="mt-2 w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50"
+            />
+          </div>
+
+          <div>
+            <label class="text-sm font-semibold text-slate-700">Username</label>
+            <input
+              id="username"
+              class="mt-2 w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50"
+            />
+          </div>
+
+          <div>
+            <label class="text-sm font-semibold text-slate-700">Tweet ID</label>
+            <input
+              id="tweet_id"
+              class="mt-2 w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50"
+            />
+          </div>
+
+          <div>
+            <label class="text-sm font-semibold text-slate-700"
+              >Confidence (0–1)</label
+            >
+            <input
+              id="confidence"
+              type="number"
+              step="0.0001"
+              class="mt-2 w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50"
+            />
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="text-sm font-semibold text-slate-700"
+              >Tweet Text</label
+            >
+            <textarea
+              id="tweet_text"
+              rows="6"
+              class="mt-2 w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50"
+            ></textarea>
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="text-sm font-semibold text-slate-700"
+              >Risk Level</label
+            >
+            <select
+              id="risk"
+              class="mt-2 w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50"
+            >
+              <option>High</option>
+              <option>Medium</option>
+              <option>Low</option>
+            </select>
+          </div>
+
+          <div class="md:col-span-2 flex gap-3 mt-2">
+            <button
+              id="btnSend"
+              type="submit"
+              class="px-6 py-3 rounded-xl text-white font-semibold"
+              style="background: linear-gradient(135deg, #ff6b6b, #ffa8a8)"
+            >
+              Send Report
+            </button>
+
+            <button
+              type="button"
+              class="px-6 py-3 rounded-xl border border-slate-200 font-semibold hover:bg-slate-50"
+              onclick="clearStatus()"
+            >
+              Clear Status
+            </button>
+          </div>
+
+          <div class="md:col-span-2">
+            <div id="statusBox" class="hidden mt-2 text-sm font-semibold"></div>
+
+            <details class="mt-4">
+              <summary
+                class="cursor-pointer text-sm font-semibold text-slate-700"
+              >
+                Debug
+              </summary>
+              <pre
+                id="debugBox"
+                class="mt-3 p-4 rounded-xl bg-slate-900 text-slate-100 text-xs overflow-auto"
+              ></pre>
+            </details>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // ===========================
+      // CONFIG
+      // ===========================
+      const REPORT_API_BASE = "http://127.0.0.1:8001";
+      const SEND_REPORT_URL = `${REPORT_API_BASE}/send-report`;
+      const HEALTH_URL = `${REPORT_API_BASE}/health`;
+
+      const $ = (id) => document.getElementById(id);
+
+      function showStatus(type, msg) {
+        const box = $("statusBox");
+        box.classList.remove("hidden");
+        box.textContent = msg;
+
+        if (type === "success")
+          box.className = "mt-2 text-sm font-semibold text-green-700";
+        else if (type === "warn")
+          box.className = "mt-2 text-sm font-semibold text-yellow-700";
+        else box.className = "mt-2 text-sm font-semibold text-red-600";
+      }
+
+      function clearStatus() {
+        $("statusBox").classList.add("hidden");
+        $("statusBox").textContent = "";
+        $("debugBox").textContent = "";
+      }
+
+      function getParam(name, fallback = "") {
+        const u = new URL(window.location.href);
+        return u.searchParams.get(name) ?? fallback;
+      }
+
+      function prefillFromQuery() {
+        $("case_id").value = getParam("case_id", `SX-${Date.now()}`);
+        $("username").value = getParam("username", "");
+        $("tweet_id").value = getParam("tweet_id", "");
+        $("tweet_text").value = getParam("tweet_text", "");
+        $("confidence").value = getParam("confidence", "0.00");
+        const r = getParam("risk", "High");
+        $("risk").value = ["High", "Medium", "Low"].includes(r) ? r : "High";
+      }
+
+      function buildPayload() {
+        return {
+          case_id: $("case_id").value.trim(),
+          username: $("username").value.trim(),
+          tweet_id: $("tweet_id").value.trim(),
+          tweet_text: $("tweet_text").value.trim(),
+          confidence: Number($("confidence").value),
+          risk: $("risk").value,
+        };
+      }
+
+      async function testConnection() {
+        try {
+          const r = await fetch(HEALTH_URL);
+          const t = await r.text();
+          $("debugBox").textContent =
+            `GET ${HEALTH_URL}\nSTATUS: ${r.status}\nBODY:\n${t}`;
+
+          if (!r.ok) throw new Error("Health failed");
+          showStatus("success", "Report server connected ✅ (8001)");
+          alert("✅ Report server connected (8001)");
+        } catch (e) {
+          showStatus(
+            "error",
+            "Cannot reach report server on 8001. Start uvicorn on port 8001.",
+          );
+          alert("❌ Report server not reachable. Start backend on port 8001.");
+        }
+      }
+
+      $("btnTest").addEventListener("click", testConnection);
+
+      $("reportForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        clearStatus();
+
+        const payload = buildPayload();
+
+        if (
+          !payload.case_id ||
+          !payload.username ||
+          !payload.tweet_id ||
+          !payload.tweet_text
+        ) {
+          showStatus(
+            "error",
+            "Fill all fields (case_id, username, tweet_id, tweet_text).",
+          );
+          alert("❌ Please fill all required fields.");
+          return;
+        }
+        if (!(payload.confidence >= 0 && payload.confidence <= 1)) {
+          showStatus("error", "Confidence must be between 0 and 1.");
+          alert("❌ Confidence must be between 0 and 1.");
+          return;
+        }
+
+        const btn = $("btnSend");
+        btn.disabled = true;
+        btn.textContent = "Sending...";
+
+        try {
+          $("debugBox").textContent =
+            `POST ${SEND_REPORT_URL}\nPAYLOAD:\n${JSON.stringify(payload, null, 2)}\n\n---\nWaiting...\n`;
+
+          const resp = await fetch(SEND_REPORT_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          const text = await resp.text();
+          $("debugBox").textContent +=
+            `\nSTATUS: ${resp.status}\nRESPONSE:\n${text}\n`;
+
+          let data = {};
+          try {
+            data = JSON.parse(text);
+          } catch {}
+
+          if (!resp.ok) {
+            const msg = data.detail || "Report API failed. See Debug.";
+            showStatus("error", msg);
+            alert("❌ " + msg);
+            return;
+          }
+
+          if (data.status === "success") {
+            showStatus(
+              "success",
+              "✅ Mail sent successfully! Check inbox/spam.",
+            );
+            alert("✅ Message sent! Check your mail (Inbox/Spam).");
+          } else if (data.status === "saved") {
+            showStatus(
+              "warn",
+              "⚠️ Email failed but report saved locally. See Debug & reports_local.jsonl.",
+            );
+            alert(
+              "⚠️ Email failed (Gmail auth). Report saved locally. Check backend logs.",
+            );
+          } else {
+            showStatus("success", "✅ Report submitted.");
+            alert("✅ Report submitted.");
+          }
+        } catch (err) {
+          console.error(err);
+          showStatus(
+            "error",
+            "Network error: request did not reach backend. See console (F12).",
+          );
+          alert("❌ Network error. Backend not reachable.");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Send Report";
+        }
+      });
+
+      // init
+      prefillFromQuery();
+      testConnection();
+    </script>
+  </body>
+</html>
