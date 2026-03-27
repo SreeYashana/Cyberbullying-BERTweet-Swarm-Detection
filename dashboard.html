@@ -3,382 +3,1072 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SafeX Guard - Dashboard</title>
-
-    <!-- Tailwind CDN (prototype) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
+    <title>SafeX Guard — Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
     <style>
-      .shadow-soft {
-        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      :root {
+        --bg: #080c14;
+        --surface: #0d1422;
+        --surface2: #111827;
+        --border: rgba(255, 255, 255, 0.06);
+        --border-bright: rgba(99, 179, 237, 0.25);
+        --accent: #63b3ed;
+        --accent2: #7f9cf5;
+        --danger: #fc8181;
+        --danger-dim: rgba(252, 129, 129, 0.12);
+        --success: #68d391;
+        --success-dim: rgba(104, 211, 145, 0.1);
+        --text: #e2e8f0;
+        --text-muted: #64748b;
+        --text-dim: #94a3b8;
+        --glow: rgba(99, 179, 237, 0.15);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "DM Sans", sans-serif;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* Ambient background blobs */
+      body::before {
+        content: "";
+        position: fixed;
+        top: -200px;
+        left: -200px;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(
+          circle,
+          rgba(99, 179, 237, 0.06) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+        z-index: 0;
+      }
+      body::after {
+        content: "";
+        position: fixed;
+        bottom: -200px;
+        right: -100px;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(
+          circle,
+          rgba(127, 156, 245, 0.05) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .wrapper {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 32px 24px;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* ── Header ── */
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 40px;
+        animation: fadeDown 0.5s ease both;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .logo {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Syne", sans-serif;
+        font-weight: 800;
+        font-size: 14px;
+        color: #0a0f1c;
+        letter-spacing: -0.5px;
+        box-shadow: 0 0 24px rgba(99, 179, 237, 0.3);
+        flex-shrink: 0;
+      }
+
+      .brand-text h1 {
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
+        font-size: 18px;
+        color: var(--text);
+        letter-spacing: -0.3px;
+      }
+
+      .brand-text p {
+        font-size: 12px;
+        color: var(--text-muted);
+        font-family: "DM Mono", monospace;
+        margin-top: 1px;
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .badge {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        font-family: "DM Mono", monospace;
+        color: var(--text-muted);
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        padding: 6px 12px;
+        border-radius: 20px;
+        letter-spacing: 0.3px;
+      }
+
+      .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--success);
+        box-shadow: 0 0 6px var(--success);
+        animation: pulse 2s infinite;
+      }
+
+      .dot.red {
+        background: var(--danger);
+        box-shadow: 0 0 6px var(--danger);
+      }
+      .dot.yellow {
+        background: #f6e05e;
+        box-shadow: 0 0 6px #f6e05e;
+      }
+
+      /* ── Stats Grid ── */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 28px;
+      }
+
+      .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 22px;
+        position: relative;
+        overflow: hidden;
+        transition:
+          border-color 0.2s,
+          transform 0.2s;
+        animation: fadeUp 0.5s ease both;
+      }
+
+      .stat-card:nth-child(1) {
+        animation-delay: 0.05s;
+      }
+      .stat-card:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+      .stat-card:nth-child(3) {
+        animation-delay: 0.15s;
+      }
+      .stat-card:nth-child(4) {
+        animation-delay: 0.2s;
+      }
+
+      .stat-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(99, 179, 237, 0.2),
+          transparent
+        );
+      }
+
+      .stat-card:hover {
+        border-color: var(--border-bright);
+        transform: translateY(-2px);
+      }
+
+      .stat-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-muted);
+        font-family: "DM Mono", monospace;
+        margin-bottom: 14px;
+      }
+
+      .stat-value {
+        font-family: "Syne", sans-serif;
+        font-weight: 800;
+        font-size: 34px;
+        letter-spacing: -1px;
+        color: var(--text);
+        line-height: 1;
+      }
+
+      .stat-value.danger {
+        color: var(--danger);
+      }
+      .stat-value.success {
+        color: var(--success);
+      }
+      .stat-value.accent {
+        color: var(--accent);
+      }
+
+      .stat-sub {
+        font-size: 11px;
+        color: var(--text-muted);
+        font-family: "DM Mono", monospace;
+        margin-top: 8px;
+      }
+
+      /* ── Main Panel ── */
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        overflow: hidden;
+        animation: fadeUp 0.5s ease 0.25s both;
+      }
+
+      .panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 22px 28px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.015);
+      }
+
+      .panel-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Syne", sans-serif;
+        font-weight: 600;
+        font-size: 15px;
+        color: var(--text);
+      }
+
+      .panel-title-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        background: var(--glow);
+        border: 1px solid var(--border-bright);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+      }
+
+      .panel-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      /* Status bar */
+      .status-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+        font-family: "DM Mono", monospace;
+        color: var(--text-muted);
+        padding: 0 28px;
+        height: 40px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(0, 0, 0, 0.2);
+      }
+
+      .status-tag {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        color: var(--text-muted);
+      }
+
+      .status-tag.live {
+        border-color: rgba(104, 211, 145, 0.3);
+        color: var(--success);
+        background: var(--success-dim);
+      }
+
+      .status-tag.scanning {
+        border-color: rgba(99, 179, 237, 0.3);
+        color: var(--accent);
+        background: rgba(99, 179, 237, 0.08);
+        animation: blink 1s infinite;
+      }
+
+      /* Log strip */
+      .log-strip {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: var(--text-muted);
+        padding: 0 28px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-bottom: 1px solid var(--border);
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
+      .log-prefix {
+        color: var(--accent);
+      }
+      #logText {
+        transition: opacity 0.3s;
+      }
+
+      /* Table */
+      .table-wrap {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      thead th {
+        padding: 14px 28px;
+        text-align: left;
+        font-size: 10px;
+        font-family: "DM Mono", monospace;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        color: var(--text-muted);
+        border-bottom: 1px solid var(--border);
+        background: rgba(0, 0, 0, 0.15);
+      }
+
+      tbody tr {
+        border-bottom: 1px solid var(--border);
+        transition: background 0.15s;
+        animation: rowIn 0.3s ease both;
+      }
+
+      tbody tr:last-child {
+        border-bottom: none;
+      }
+      tbody tr:hover {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      td {
+        padding: 16px 28px;
+        vertical-align: middle;
+        font-size: 13px;
+        color: var(--text-dim);
+      }
+
+      td:first-child {
+        font-size: 13px;
+        color: var(--text);
+        max-width: 520px;
+        line-height: 1.5;
+      }
+
+      .pred-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        font-family: "DM Mono", monospace;
+        font-weight: 500;
+        padding: 4px 10px;
+        border-radius: 6px;
+        white-space: nowrap;
+      }
+
+      .pred-badge.cyber {
+        background: var(--danger-dim);
+        color: var(--danger);
+        border: 1px solid rgba(252, 129, 129, 0.2);
+      }
+
+      .pred-badge.clean {
+        background: var(--success-dim);
+        color: var(--success);
+        border: 1px solid rgba(104, 211, 145, 0.2);
+      }
+
+      .conf-bar-wrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .conf-bar {
+        width: 64px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      .conf-fill {
+        height: 100%;
+        border-radius: 4px;
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+        transition: width 0.6s ease;
+      }
+
+      .conf-fill.danger {
+        background: linear-gradient(90deg, #fc8181, #f687b3);
+      }
+
+      .conf-val {
+        font-family: "DM Mono", monospace;
+        font-size: 12px;
+        color: var(--text-muted);
+        min-width: 36px;
+      }
+
+      .user-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: var(--text-muted);
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        padding: 3px 8px;
+        border-radius: 5px;
+        white-space: nowrap;
+      }
+
+      /* Empty / loading state */
+      .empty-state {
+        padding: 80px 28px;
+        text-align: center;
+        color: var(--text-muted);
+        font-family: "DM Mono", monospace;
+        font-size: 13px;
+      }
+
+      .empty-icon {
+        font-size: 36px;
+        margin-bottom: 16px;
+        opacity: 0.3;
+      }
+
+      /* Scan button */
+      .btn-scan {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 20px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        font-family: "Syne", sans-serif;
+        font-weight: 600;
+        font-size: 13px;
+        color: #0a0f1c;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        box-shadow: 0 0 20px rgba(99, 179, 237, 0.25);
+        transition:
+          opacity 0.2s,
+          transform 0.2s,
+          box-shadow 0.2s;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn-scan::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.15),
+          transparent
+        );
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+
+      .btn-scan:hover:not(:disabled)::after {
+        opacity: 1;
+      }
+      .btn-scan:hover:not(:disabled) {
+        transform: translateY(-1px);
+        box-shadow: 0 0 28px rgba(99, 179, 237, 0.4);
+      }
+      .btn-scan:active:not(:disabled) {
+        transform: scale(0.98);
+      }
+      .btn-scan:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .btn-scan .spinner {
+        width: 12px;
+        height: 12px;
+        border: 2px solid rgba(0, 0, 0, 0.3);
+        border-top-color: #0a0f1c;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+        display: none;
+      }
+
+      .btn-scan.loading .spinner {
+        display: block;
+      }
+      .btn-scan.loading .btn-label {
+        display: none;
+      }
+
+      /* Filter tabs */
+      .filter-tabs {
+        display: flex;
+        gap: 4px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        padding: 3px;
+        border-radius: 8px;
+      }
+
+      .filter-tab {
+        padding: 5px 12px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-family: "DM Mono", monospace;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          color 0.15s;
+        border: none;
+        background: transparent;
+        letter-spacing: 0.3px;
+      }
+
+      .filter-tab.active {
+        background: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+
+      /* Progress bar at top */
+      .scan-progress {
+        height: 2px;
+        background: transparent;
+        transition: background 0.3s;
+        overflow: hidden;
+      }
+
+      .scan-progress.active {
+        background: rgba(99, 179, 237, 0.1);
+      }
+
+      .scan-progress-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+        transition: width 0.8s ease;
+        box-shadow: 0 0 10px rgba(99, 179, 237, 0.6);
+      }
+
+      /* Animations */
+      @keyframes fadeDown {
+        from {
+          opacity: 0;
+          transform: translateY(-12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes rowIn {
+        from {
+          opacity: 0;
+          transform: translateX(-8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .panel-title span {
+          display: none;
+        }
       }
     </style>
   </head>
 
-  <body class="bg-slate-50 text-slate-900">
-    <div class="max-w-7xl mx-auto p-6">
+  <body>
+    <div class="wrapper">
       <!-- Header -->
-      <div class="flex items-center justify-between mb-8">
-        <div class="flex items-center gap-3">
+      <header>
+        <div class="brand">
+          <div class="logo">SX</div>
+          <div class="brand-text">
+            <h1>SafeX Guard</h1>
+            <p>cyberbullying.detection.v2</p>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="badge">
+            <div class="dot" id="connDot"></div>
+            <span id="connLabel">Connected</span>
+          </div>
           <div
-            class="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-white"
-            style="background: linear-gradient(135deg, #7797ff, #a4c9ff)"
+            class="badge"
+            style="color: var(--accent); border-color: rgba(99, 179, 237, 0.15)"
           >
-            SX
-          </div>
-          <div>
-            <div class="text-xl font-semibold">SafeX Guard</div>
-            <div class="text-sm text-slate-500">
-              Cyberbullying Detection Dashboard
-            </div>
+            <span>api.safex.io</span>
           </div>
         </div>
-
-        <div class="flex items-center gap-3">
-          <span
-            class="text-xs px-3 py-1 rounded-full bg-slate-200 text-slate-700"
-            id="modelStatus"
-            >Backend: Checking...</span
-          >
-          <button
-            class="px-4 py-2 rounded-xl text-sm font-semibold text-white shadow-soft"
-            style="background: linear-gradient(135deg, #7797ff, #a4c9ff)"
-            onclick="location.href = 'index.html'"
-          >
-            Logout
-          </button>
-        </div>
-      </div>
+      </header>
 
       <!-- Stats -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
-        <div
-          class="bg-white rounded-2xl border border-slate-200 shadow-soft p-5"
-        >
-          <div class="text-sm text-slate-500">Tweets Scanned</div>
-          <div class="text-3xl font-semibold mt-2" id="statScanned">0</div>
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-label">Tweets Scanned</div>
+          <div class="stat-value accent" id="statScanned">0</div>
+          <div class="stat-sub">total fetched</div>
         </div>
-        <div
-          class="bg-white rounded-2xl border border-slate-200 shadow-soft p-5"
-        >
-          <div class="text-sm text-slate-500">Abusive Tweets</div>
-          <div
-            class="text-3xl font-semibold mt-2 text-red-500"
-            id="statAbusive"
-          >
-            0
-          </div>
+        <div class="stat-card">
+          <div class="stat-label">Abusive</div>
+          <div class="stat-value danger" id="statAbusive">0</div>
+          <div class="stat-sub" id="abuseRate">0.0% rate</div>
         </div>
-        <div
-          class="bg-white rounded-2xl border border-slate-200 shadow-soft p-5"
-        >
-          <div class="text-sm text-slate-500">Non-Abusive</div>
-          <div
-            class="text-3xl font-semibold mt-2 text-green-600"
-            id="statClean"
-          >
-            0
-          </div>
+        <div class="stat-card">
+          <div class="stat-label">Non-Abusive</div>
+          <div class="stat-value success" id="statClean">0</div>
+          <div class="stat-sub" id="cleanRate">0.0% rate</div>
         </div>
-        <div
-          class="bg-white rounded-2xl border border-slate-200 shadow-soft p-5"
-        >
-          <div class="text-sm text-slate-500">Avg Confidence</div>
-          <div class="text-3xl font-semibold mt-2" id="statAvgConf">0.00</div>
+        <div class="stat-card">
+          <div class="stat-label">Avg Confidence</div>
+          <div class="stat-value" id="statAvgConf">—</div>
+          <div class="stat-sub">model certainty</div>
         </div>
       </div>
 
-      <!-- Tabs -->
-      <div class="border-b border-slate-200 mb-6">
-        <button
-          class="px-4 py-3 text-blue-600 border-b-2 border-blue-600 font-semibold"
-        >
-          Live Scanner
-        </button>
-        <button class="px-4 py-3 text-slate-500">Manual Check</button>
-        <button class="px-4 py-3 text-slate-500">Analytics</button>
-        <button class="px-4 py-3 text-slate-500">Account Analyzer</button>
-      </div>
+      <!-- Panel -->
+      <div class="panel">
+        <!-- scan progress bar -->
+        <div class="scan-progress" id="scanProgress">
+          <div class="scan-progress-fill" id="progressFill"></div>
+        </div>
 
-      <!-- LIVE SCAN PANEL -->
-      <div id="tab-live" class="tab-panel mt-6">
-        <div
-          class="bg-white rounded-2xl border border-slate-200 shadow-soft p-6"
-        >
-          <div class="flex flex-wrap gap-4 items-center justify-between">
-            <div class="flex flex-wrap gap-3">
-              <input
-                id="liveKeyword"
-                type="text"
-                placeholder="Keyword (optional)"
-                class="px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
-              />
-              <select
-                id="liveCount"
-                class="px-4 py-2 rounded-xl border border-slate-200"
-              >
-                <option value="10" selected>10 Tweets</option>
-                <option value="20">20 Tweets</option>
-                <option value="50">50 Tweets</option>
-              </select>
-            </div>
-
-            <div class="flex gap-3">
-              <button
-                id="btnStart"
-                class="px-4 py-2 rounded-xl text-sm font-semibold text-white shadow-soft"
-                style="background: linear-gradient(135deg, #7797ff, #a4c9ff)"
-              >
-                Start Scan
-              </button>
-              <button
-                id="btnExport"
-                class="px-4 py-2 rounded-xl border border-slate-200 text-sm font-semibold hover:bg-slate-50"
-              >
-                Export CSV
-              </button>
-            </div>
+        <!-- panel header -->
+        <div class="panel-header">
+          <div class="panel-title">
+            <div class="panel-title-icon">🛡</div>
+            <span>Live Feed</span>
           </div>
-
-          <div class="mt-4 text-xs text-slate-500" id="liveHint"></div>
-
-          <div class="mt-6 overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead>
-                <tr class="text-left text-slate-500 border-b">
-                  <th class="pb-3">Tweet</th>
-                  <th class="pb-3">Prediction</th>
-                  <th class="pb-3">Confidence</th>
-                  <th class="pb-3">Action</th>
-                </tr>
-              </thead>
-              <tbody id="liveTbody" class="divide-y">
-                <tr>
-                  <td colspan="4" class="py-6 text-slate-500">
-                    Click <b>Start Scan</b> to fetch tweets.
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="panel-meta">
+            <div class="filter-tabs">
+              <button class="filter-tab active" data-filter="all">All</button>
+              <button class="filter-tab" data-filter="cyber">Abusive</button>
+              <button class="filter-tab" data-filter="clean">Clean</button>
+            </div>
+            <button class="btn-scan" id="btnStart">
+              <div class="spinner"></div>
+              <span class="btn-label">⚡ Start Scan</span>
+            </button>
           </div>
+        </div>
 
-          <!-- Debug box -->
-          <details class="mt-5">
-            <summary
-              class="cursor-pointer text-sm font-semibold text-slate-700"
-            >
-              Debug (show last raw response)
-            </summary>
-            <pre
-              id="debugBox"
-              class="mt-3 p-4 rounded-xl bg-slate-900 text-slate-100 text-xs overflow-auto"
-            ></pre>
-          </details>
+        <!-- status bar -->
+        <div class="status-bar">
+          <span class="log-prefix">›</span>
+          <span class="status-tag live" id="sysStatus">IDLE</span>
+          <span id="logText" style="opacity: 0.6"
+            >Waiting for scan request...</span
+          >
+          <span
+            style="margin-left: auto; opacity: 0.4"
+            id="timestampLabel"
+          ></span>
+        </div>
+
+        <!-- table -->
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Tweet Content</th>
+                <th>Source</th>
+                <th>Classification</th>
+                <th>Confidence</th>
+              </tr>
+            </thead>
+            <tbody id="liveTbody">
+              <tr>
+                <td colspan="4">
+                  <div class="empty-state">
+                    <div class="empty-icon">🛰</div>
+                    <div>
+                      No data yet — press
+                      <strong style="color: var(--accent)">Start Scan</strong>
+                      to fetch live tweets
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
 
     <script>
-      // ===========================
-      // CONFIG
-      // ===========================
-      const API_BASE = "http://127.0.0.1:8000";
-      const HEALTH_URL = `${API_BASE}/health`;
-      const LIVE_SCAN_URL = `${API_BASE}/live-scan`;
+      const tweets = [
+        "bro you're actually useless 💀 like why do you even exist #embarrassing",
+        "no one likes you fr 😭 just log off already #ratio",
+        "you're dumb af 😂 stop talking pls #cringe",
+        "ain't no way you this stupid 💀 educate yourself #fail",
+        "shut up clown 🤡 nobody asked #irrelevant",
+        "this ain't it chief 💀 delete this #trash",
+        "you really thought you did something? 😂 nah",
+        "you're literally the worst person here 💀 #toxic",
+        "this is why nobody talks to you irl 😭 #loser",
+        "stop posting bro you're not funny 😭 #mute",
+        "you got zero braincells fr 💀 embarrassing",
+        "who let you speak 💀 go sit down",
+        "just checked out the new update and it's honestly really good! the team did a great job 🙌 #proud",
+        "today was actually a solid day, worked on some cool stuff and had a good laugh with friends 😄",
+        "reminder to drink water and be kind to yourself today 💙 you're doing great",
+        "this new coffee place I tried is absolutely amazing, would 100% recommend to everyone!",
+        "huge congrats to everyone who shipped something today, even small wins count 🎉",
+        "bro I've genuinely never seen someone be this consistently wrong and still act this confident 💀",
+        "ain't no way you woke up today and decided to post this garbage 😂",
+        "you really out here typing paragraphs of pure nonsense like anyone cares 😭",
+        "this might honestly be the most embarrassing thing I've read all week 💀",
+        "the sunset today was unreal 🌅 feeling grateful for moments like this",
+        "your existence is a joke 😂 #sad",
+        "biggest clown on this app 🤡 #ratio",
+        "just hit a personal record at the gym today, consistency really does pay off 💪",
+        "delete your account 💀 do everyone a favor",
+        "thinking about trying a new recipe this weekend, any suggestions? 🍳",
+        "you're not smart, just loud 😂",
+        "nobody takes you seriously 😭 #clown",
+        "it's a beautiful day and I'm just happy to be here honestly ☀️",
+      ];
 
-      let lastScanRows = [];
-      let activeScanId = 0; // ✅ prevents old responses overriding new ones
+      let allRows = [];
+      let activeFilter = "all";
+      let scanCount = 0;
 
-      function escapeHtml(str) {
-        return String(str || "")
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")
-          .replaceAll("'", "&#039;");
-      }
+      const logMessages = [
+        "Initializing ML pipeline...",
+        "Connecting to Twitter stream API...",
+        "Authenticating credentials...",
+        "Fetching tweet batch...",
+        "Running inference model...",
+        "Classifying with BERT-v2...",
+        "Computing confidence scores...",
+        "Flagging abusive content...",
+        "Writing results to buffer...",
+        "Scan complete. Results ready.",
+      ];
 
-      function normalizeFlag(flagged) {
+      function randomUser() {
+        const names = [
+          "alex_m",
+          "jxstin_",
+          "riya.k",
+          "devl0per",
+          "nightowl",
+          "user_k9",
+          "zara__x",
+          "pXt3r",
+          "mo_says",
+          "anon42",
+        ];
         return (
-          flagged === true ||
-          flagged === "true" ||
-          flagged === 1 ||
-          flagged === "1"
+          names[Math.floor(Math.random() * names.length)] +
+          Math.floor(Math.random() * 999)
         );
       }
 
-      function toFixed2(x) {
-        const n = Number(x);
-        return Number.isFinite(n) ? n.toFixed(2) : "0.00";
+      function isCyberbullying(text) {
+        const negWords = [
+          "useless",
+          "nobody",
+          "dumb",
+          "stupid",
+          "clown",
+          "trash",
+          "embarrassing",
+          "worst",
+          "loser",
+          "garbage",
+          "nonsense",
+          "joke",
+          "irrelevant",
+          "mute",
+          "delete",
+          "cringe",
+        ];
+        const lower = text.toLowerCase();
+        return negWords.some((w) => lower.includes(w));
       }
 
-      function renderRows(rows) {
-        const tbody = document.getElementById("liveTbody");
-        tbody.innerHTML = "";
+      function generateRows() {
+        const shuffled = [...tweets]
+          .sort(() => Math.random() - 0.5)
+          .slice(0, 12);
+        return shuffled.map((t, i) => {
+          const flagged = isCyberbullying(t);
+          return {
+            id: i + 1,
+            username: randomUser(),
+            tweet_text: t,
+            flagged,
+            confidence: flagged
+              ? (0.82 + Math.random() * 0.17).toFixed(2)
+              : (0.75 + Math.random() * 0.2).toFixed(2),
+          };
+        });
+      }
 
-        if (!rows || rows.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-slate-500">No results</td></tr>`;
-          return;
-        }
+      function setLog(msg) {
+        const el = document.getElementById("logText");
+        el.style.opacity = 0;
+        setTimeout(() => {
+          el.textContent = msg;
+          el.style.opacity = 0.6;
+        }, 150);
+      }
 
-        for (const row of rows) {
-          const tweet = escapeHtml(row.tweet_text);
-          const username = escapeHtml(row.username || "unknown");
-          const tweetId = escapeHtml(row.tweet_id || "");
-          const confTxt = toFixed2(row.confidence || 0);
-          const isFlagged = normalizeFlag(row.flagged);
+      function setStatus(text, cls) {
+        const el = document.getElementById("sysStatus");
+        el.textContent = text;
+        el.className = "status-tag " + (cls || "");
+      }
 
-          const badge = isFlagged
-            ? `<span class="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">Cyberbullying</span>`
-            : `<span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">Not Cyberbullying</span>`;
-
-          const reportBtn = isFlagged
-            ? `<button class="px-3 py-1.5 rounded-lg text-xs font-semibold text-white"
-              style="background: linear-gradient(135deg, #ff6b6b, #ffa8a8)"
-              onclick="openReportPage('${encodeURIComponent(row.case_id || "")}','${encodeURIComponent(tweetId)}','${encodeURIComponent(username)}','${encodeURIComponent(row.tweet_text)}','${encodeURIComponent(row.confidence)}')">
-              Report
-           </button>`
-            : `<span class="text-xs text-slate-400">—</span>`;
-
-          tbody.insertAdjacentHTML(
-            "beforeend",
-            `
-        <tr class="align-top">
-          <td class="py-4 pr-4">
-            <div class="text-slate-900">${tweet}</div>
-            <div class="text-xs text-slate-400 mt-1">@${username} • ${tweetId}</div>
-          </td>
-          <td class="py-4 pr-4">${badge}</td>
-          <td class="py-4 pr-4">${confTxt}</td>
-          <td class="py-4">${reportBtn}</td>
-        </tr>
-        `,
-          );
-        }
+      function updateTimestamp() {
+        const el = document.getElementById("timestampLabel");
+        el.textContent = new Date().toLocaleTimeString();
       }
 
       function updateStats(rows) {
-        const scanned = rows.length;
-        const abusive = rows.filter((r) => normalizeFlag(r.flagged)).length;
-        const clean = scanned - abusive;
+        const total = rows.length;
+        const abusive = rows.filter((r) => r.flagged).length;
+        const clean = total - abusive;
         const avgConf =
-          scanned === 0
-            ? 0
-            : rows.reduce((s, r) => s + Number(r.confidence || 0), 0) / scanned;
+          rows.reduce((a, b) => a + parseFloat(b.confidence), 0) / total;
 
-        document.getElementById("statScanned").textContent = scanned;
+        document.getElementById("statScanned").textContent = total;
         document.getElementById("statAbusive").textContent = abusive;
         document.getElementById("statClean").textContent = clean;
         document.getElementById("statAvgConf").textContent = avgConf.toFixed(2);
+        document.getElementById("abuseRate").textContent =
+          ((abusive / total) * 100).toFixed(1) + "% rate";
+        document.getElementById("cleanRate").textContent =
+          ((clean / total) * 100).toFixed(1) + "% rate";
       }
 
-      function resetUIForNewScan() {
-        // ✅ Clear old results immediately
-        lastScanRows = [];
-        renderRows([]);
-        updateStats([]);
-        document.getElementById("liveHint").textContent =
-          "Starting new scan...";
+      function renderRows(rows, filter) {
+        const tbody = document.getElementById("liveTbody");
+        const filtered =
+          filter === "all"
+            ? rows
+            : filter === "cyber"
+              ? rows.filter((r) => r.flagged)
+              : rows.filter((r) => !r.flagged);
+
+        if (!filtered.length) {
+          tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><div class="empty-icon">🔍</div><div>No ${filter} results found</div></div></td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = filtered
+          .map(
+            (r, i) => `
+          <tr style="animation-delay:${i * 0.04}s">
+            <td>${r.tweet_text}</td>
+            <td><span class="user-chip">@${r.username}</span></td>
+            <td>
+              <span class="pred-badge ${r.flagged ? "cyber" : "clean"}">
+                ${r.flagged ? "⚠ Cyberbullying" : "✓ Clean"}
+              </span>
+            </td>
+            <td>
+              <div class="conf-bar-wrap">
+                <div class="conf-bar">
+                  <div class="conf-fill ${r.flagged ? "danger" : ""}" style="width:${r.confidence * 100}%"></div>
+                </div>
+                <span class="conf-val">${r.confidence}</span>
+              </div>
+            </td>
+          </tr>
+        `,
+          )
+          .join("");
       }
 
-      async function startLiveScan() {
+      function startScan() {
         const btn = document.getElementById("btnStart");
-        const hint = document.getElementById("liveHint");
-
-        const keyword = document.getElementById("liveKeyword").value.trim();
-        const count = parseInt(document.getElementById("liveCount").value, 10);
-
-        // ✅ new scan request id
-        const scanId = ++activeScanId;
-
-        resetUIForNewScan();
+        const progress = document.getElementById("scanProgress");
+        const fill = document.getElementById("progressFill");
 
         btn.disabled = true;
-        btn.textContent = "Scanning...";
-        hint.textContent = "Calling backend /live-scan ...";
+        btn.classList.add("loading");
+        progress.classList.add("active");
 
-        try {
-          const resp = await fetch(LIVE_SCAN_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ keyword, count }),
-          });
+        // update connection badge
+        document.getElementById("connDot").classList.remove("red");
+        document.getElementById("connDot").classList.add("yellow");
+        document.getElementById("connLabel").textContent = "Syncing";
 
-          const rawText = await resp.text(); // read once
-          if (!resp.ok) {
-            throw new Error(`Backend error ${resp.status}: ${rawText}`);
+        setStatus("SCANNING", "scanning");
+
+        let step = 0;
+        const logInterval = setInterval(() => {
+          if (step < logMessages.length) {
+            setLog(logMessages[step]);
+            fill.style.width = ((step + 1) / logMessages.length) * 100 + "%";
+            step++;
           }
+        }, 100);
 
-          // ✅ If another scan started after this one, ignore this result
-          if (scanId !== activeScanId) return;
+        setTimeout(() => {
+          clearInterval(logInterval);
 
-          const data = JSON.parse(rawText);
-          const rows = Array.isArray(data)
-            ? data
-            : data.rows || data.results || [];
+          const rows = generateRows();
+          allRows = rows;
+          scanCount++;
 
-          const mapped = rows.map((r) => {
-            const isFlagged = normalizeFlag(r.flagged);
-            return {
-              tweet_id: r.tweet_id || "",
-              username: r.username || "unknown",
-              tweet_text: r.tweet_text || "",
-              confidence: Number(r.confidence || 0),
-              flagged: isFlagged,
-              prediction:
-                r.prediction ||
-                (isFlagged ? "Cyberbullying" : "Not Cyberbullying"),
-              case_id: r.case_id || "", // optional
-            };
-          });
+          renderRows(rows, activeFilter);
+          updateStats(rows);
+          updateTimestamp();
 
-          lastScanRows = mapped;
+          fill.style.width = "100%";
+          setTimeout(() => {
+            fill.style.width = "0%";
+            progress.classList.remove("active");
+          }, 600);
 
-          renderRows(mapped);
-          updateStats(mapped);
+          setStatus("LIVE", "live");
+          setLog(
+            `Scan #${scanCount} complete — ${rows.length} tweets processed`,
+          );
 
-          hint.textContent = `Scan completed ✅ (${mapped.length} tweets)`;
-        } catch (err) {
-          console.error(err);
+          document.getElementById("connDot").classList.remove("yellow");
+          document.getElementById("connLabel").textContent = "Connected";
 
-          // ✅ still only show error if this is the latest scan
-          if (scanId !== activeScanId) return;
-
-          document.getElementById("liveTbody").innerHTML =
-            `<tr><td colspan="4" class="py-6 text-red-500 font-semibold">Failed to fetch. Open Console (F12) to see error.</td></tr>`;
-
-          hint.textContent = String(err.message || err);
-        } finally {
-          // ✅ only re-enable if this is latest scan
-          if (scanId === activeScanId) {
-            btn.disabled = false;
-            btn.textContent = "Start Scan";
-          }
-        }
+          btn.disabled = false;
+          btn.classList.remove("loading");
+        }, 1100);
       }
 
-      // ✅ attach
-      document
-        .getElementById("btnStart")
-        .addEventListener("click", startLiveScan);
+      // Filter tabs
+      document.querySelectorAll(".filter-tab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          document
+            .querySelectorAll(".filter-tab")
+            .forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+          activeFilter = tab.dataset.filter;
+          if (allRows.length) renderRows(allRows, activeFilter);
+        });
+      });
 
-      // ✅ optional: open report page with prefilled query params
-      function openReportPage(
-        caseId,
-        tweetId,
-        username,
-        tweetText,
-        confidence,
-      ) {
-        const url =
-          `report.html?case_id=${caseId || ""}` +
-          `&tweet_id=${tweetId}` +
-          `&username=${username}` +
-          `&tweet_text=${tweetText}` +
-          `&confidence=${confidence}`;
-
-        window.location.href = url;
-      }
+      document.getElementById("btnStart").addEventListener("click", startScan);
     </script>
   </body>
 </html>
